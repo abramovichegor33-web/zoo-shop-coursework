@@ -1,9 +1,16 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="ZooShop.MainWindow"
-        Title="ZooShop">
-    Welcome to Avalonia!
+        Title="Вход"
+        Width="320" Height="320"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False">
+    <StackPanel Margin="20" Spacing="10" VerticalAlignment="Center">
+        <TextBlock Text="Магазин зоотоваров" FontSize="20" HorizontalAlignment="Center"/>
+        <TextBox Name="LoginBox" Watermark="Логин"/>
+        <TextBox Name="PasswordBox" Watermark="Пароль" PasswordChar="●"/>
+        <Button Content="Войти" HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center" Click="LoginButton_Click"/>
+        <TextBlock Name="MessageText" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+    </StackPanel>
 </Window>
