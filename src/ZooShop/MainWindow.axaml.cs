@@ -23,8 +23,9 @@ public partial class MainWindow : Window
                 MessageText.Text = "Неверный логин или пароль";
                 return;
             }
-            MessageText.Foreground = Brushes.Green;
-            MessageText.Text = "Вход выполнен, роль: " + role;
+            var productsWindow = new ProductsWindow(role);
+            productsWindow.Show();
+            Close();
         }
         catch (Exception ex)
         {

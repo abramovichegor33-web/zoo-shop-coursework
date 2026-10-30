@@ -1,0 +1,21 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ZooShop.ProductsWindow"
+        Title="Товары"
+        Width="800" Height="500"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="10" RowDefinitions="Auto,*">
+        <TextBlock Name="UserText" Grid.Row="0" Margin="0,0,0,10" FontSize="16"/>
+        <DataGrid Name="ProductsGrid" Grid.Row="1" IsReadOnly="True"
+                  AutoGenerateColumns="False" GridLinesVisibility="All">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}"/>
+                <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
+                <DataGridTextColumn Header="Категория" Binding="{Binding Category}"/>
+                <DataGridTextColumn Header="Цена" Binding="{Binding Price}"/>
+                <DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}"/>
+                <DataGridTextColumn Header="Описание" Binding="{Binding Description}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>
