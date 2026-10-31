@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using MySqlConnector;
 
@@ -13,6 +14,26 @@ public class Product
     public string Description { get; set; } = "";
 }
 
+public class CartItem
+{
+    public int ProductId { get; set; }
+    public string Name { get; set; } = "";
+    public decimal Price { get; set; }
+    public int Quantity { get; set; }
+    public int MaxQuantity { get; set; }
+    public decimal Sum => Price * Quantity;
+}
+
+public class OrderRow
+{
+    public int Id { get; set; }
+    public string Date { get; set; } = "";
+    public decimal Total { get; set; }
+    public string Payment { get; set; } = "";
+    public string Status { get; set; } = "";
+    public string Items { get; set; } = "";
+}
+
 public class User
 {
     public int Id { get; set; }
@@ -25,6 +46,7 @@ public class User
 public static class Session
 {
     public static User? Current { get; set; }
+    public static List<CartItem> Cart { get; } = new();
 }
 
 public static class Database
@@ -145,5 +167,105 @@ public static class Database
         cmd.Parameters.AddWithValue("@id", userId);
         cmd.Parameters.AddWithValue("@old", oldPassword);
         return cmd.ExecuteNonQuery() > 0;
+    }
+
+    public static int PlaceOrder(int userId, List<CartItem> items, string paymentMethod = "Картой")
+    {
+        using var conn = new MySqlConnection(ConnectionString);
+        conn.Open();
+        using var tx = conn.BeginTransaction();
+
+        try
+        {
+            decimal total = 0;
+            var prices = new Dictionary<int, decimal>();
+
+            foreach (var item in items)
+            {
+                using var check = new MySqlCommand(
+                    "SELECT price, quantity, name FROM products WHERE id = @id FOR UPDATE", conn, tx);
+                check.Parameters.AddWithValue("@id", item.ProductId);
+                using var r = check.ExecuteReader();
+                if (!r.Read())
+                {
+                    throw new Exception("Товар «" + item.Name + "» больше не продаётся");
+                }
+                var price = r.GetDecimal(0);
+                var stock = r.GetInt32(1);
+                if (stock < item.Quantity)
+                {
+                    throw new Exception("Недостаточно товара «" + item.Name + "» на складе (осталось " + stock + ")");
+                }
+                prices[item.ProductId] = price;
+                total += price * item.Quantity;
+            }
+
+            long orderId;
+            using (var ins = new MySqlCommand(
+                "INSERT INTO orders (user_id, total, payment_method, status) VALUES (@u, @t, @pm, 'Оплачен')", conn, tx))
+            {
+                ins.Parameters.AddWithValue("@u", userId);
+                ins.Parameters.AddWithValue("@t", total);
+                ins.Parameters.AddWithValue("@pm", paymentMethod);
+                ins.ExecuteNonQuery();
+                orderId = ins.LastInsertedId;
+            }
+
+            foreach (var item in items)
+            {
+                using var line = new MySqlCommand(
+                    "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (@o, @p, @q, @pr)", conn, tx);
+                line.Parameters.AddWithValue("@o", orderId);
+                line.Parameters.AddWithValue("@p", item.ProductId);
+                line.Parameters.AddWithValue("@q", item.Quantity);
+                line.Parameters.AddWithValue("@pr", prices[item.ProductId]);
+                line.ExecuteNonQuery();
+
+                using var upd = new MySqlCommand(
+                    "UPDATE products SET quantity = quantity - @q WHERE id = @p", conn, tx);
+                upd.Parameters.AddWithValue("@q", item.Quantity);
+                upd.Parameters.AddWithValue("@p", item.ProductId);
+                upd.ExecuteNonQuery();
+            }
+
+            tx.Commit();
+            return (int)orderId;
+        }
+        catch
+        {
+            tx.Rollback();
+            throw;
+        }
+    }
+
+    public static List<OrderRow> GetOrders(int userId)
+    {
+        var list = new List<OrderRow>();
+        using var conn = new MySqlConnection(ConnectionString);
+        conn.Open();
+
+        using var cmd = new MySqlCommand(
+            "SELECT o.id, o.created_at, o.total, o.payment_method, o.status, " +
+            "IFNULL(GROUP_CONCAT(CONCAT(p.name, ' x', i.quantity) SEPARATOR ', '), '') " +
+            "FROM orders o " +
+            "LEFT JOIN order_items i ON i.order_id = o.id " +
+            "LEFT JOIN products p ON p.id = i.product_id " +
+            "WHERE o.user_id = @u " +
+            "GROUP BY o.id, o.created_at, o.total, o.payment_method, o.status ORDER BY o.id DESC", conn);
+        cmd.Parameters.AddWithValue("@u", userId);
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+        {
+            list.Add(new OrderRow
+            {
+                Id = reader.GetInt32(0),
+                Date = reader.GetDateTime(1).ToString("dd.MM.yyyy HH:mm"),
+                Total = reader.GetDecimal(2),
+                Payment = reader.GetString(3),
+                Status = reader.GetString(4),
+                Items = reader.GetString(5)
+            });
+        }
+        return list;
     }
 }

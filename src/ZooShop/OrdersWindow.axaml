@@ -1,0 +1,23 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ZooShop.OrdersWindow"
+        Title="Мои заказы"
+        Width="900" Height="480" MinWidth="700" MinHeight="350"
+        WindowStartupLocation="CenterOwner">
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0" Background="{DynamicResource AccentBrush}" Padding="16,12">
+            <TextBlock Text="Мои заказы" FontSize="22" FontWeight="Bold" Foreground="White"/>
+        </Border>
+        <DataGrid Name="OrdersGrid" Grid.Row="1" Margin="12" IsReadOnly="True"
+                  AutoGenerateColumns="False" GridLinesVisibility="Horizontal">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="№" Binding="{Binding Id}"/>
+                <DataGridTextColumn Header="Дата" Binding="{Binding Date}"/>
+                <DataGridTextColumn Header="Сумма" Binding="{Binding Total}"/>
+                <DataGridTextColumn Header="Оплата" Binding="{Binding Payment}"/>
+                <DataGridTextColumn Header="Статус" Binding="{Binding Status}"/>
+                <DataGridTextColumn Header="Товары" Binding="{Binding Items}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

@@ -20,6 +20,10 @@ public partial class ProductsWindow : Window
         _user = Session.Current ?? new User { Login = "guest", FullName = "Гость", Role = "user" };
         RefreshHeader();
         AdminPanel.IsVisible = _user.IsAdmin;
+        AddToCartButton.IsVisible = !_user.IsAdmin;
+        CartButton.IsVisible = !_user.IsAdmin;
+        OrdersButton.IsVisible = !_user.IsAdmin;
+        UpdateCartButton();
 
         var categories = new List<string> { AllCategories };
         categories.AddRange(Database.GetCategories());
@@ -40,6 +44,12 @@ public partial class ProductsWindow : Window
     {
         var roleName = _user.IsAdmin ? "администратор" : "покупатель";
         UserText.Text = _user.FullName + " (" + roleName + ")";
+    }
+
+    private void UpdateCartButton()
+    {
+        var count = Session.Cart.Sum(i => i.Quantity);
+        CartButton.Content = count > 0 ? "Корзина (" + count + ")" : "Корзина";
     }
 
     private void LoadProducts()
@@ -70,6 +80,66 @@ public partial class ProductsWindow : Window
     {
         StatusText.Foreground = ok ? Brushes.Green : Brushes.Red;
         StatusText.Text = text;
+    }
+
+    private void SetCartStatus(string text, bool ok)
+    {
+        CartStatusText.Foreground = ok ? Brushes.Green : Brushes.Red;
+        CartStatusText.Text = text;
+    }
+
+    private void AddToCartButton_Click(object? sender, RoutedEventArgs e)
+    {
+        if (ProductsGrid.SelectedItem is not Product product)
+        {
+            SetCartStatus("Выберите товар в таблице", false);
+            return;
+        }
+
+        var existing = Session.Cart.FirstOrDefault(i => i.ProductId == product.Id);
+        var inCart = existing?.Quantity ?? 0;
+        if (inCart >= product.Quantity)
+        {
+            SetCartStatus(product.Quantity == 0 ? "Товара нет в наличии" : "Больше нет на складе", false);
+            return;
+        }
+
+        if (existing == null)
+        {
+            Session.Cart.Add(new CartItem
+            {
+                ProductId = product.Id,
+                Name = product.Name,
+                Price = product.Price,
+                Quantity = 1,
+                MaxQuantity = product.Quantity
+            });
+        }
+        else
+        {
+            existing.Quantity++;
+            existing.MaxQuantity = product.Quantity;
+        }
+
+        UpdateCartButton();
+        SetCartStatus("Добавлено: " + product.Name, true);
+    }
+
+    private async void CartButton_Click(object? sender, RoutedEventArgs e)
+    {
+        var window = new CartWindow();
+        await window.ShowDialog(this);
+        UpdateCartButton();
+        if (window.OrderPlaced)
+        {
+            LoadProducts();
+            SetCartStatus("Заказ оформлен", true);
+        }
+    }
+
+    private async void OrdersButton_Click(object? sender, RoutedEventArgs e)
+    {
+        await new OrdersWindow().ShowDialog(this);
     }
 
     private void AddButton_Click(object? sender, RoutedEventArgs e)
@@ -139,6 +209,7 @@ public partial class ProductsWindow : Window
     private void LogoutButton_Click(object? sender, RoutedEventArgs e)
     {
         Session.Current = null;
+        Session.Cart.Clear();
         new MainWindow().Show();
         Close();
     }

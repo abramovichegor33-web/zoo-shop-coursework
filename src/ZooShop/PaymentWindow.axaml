@@ -1,0 +1,35 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ZooShop.PaymentWindow"
+        Title="Оплата заказа"
+        Width="420" Height="520"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0" Background="{DynamicResource AccentBrush}" Padding="16,12">
+            <StackPanel>
+                <TextBlock Text="Оплата заказа" FontSize="22" FontWeight="Bold" Foreground="White"/>
+                <TextBlock Name="SumText" Foreground="White" Opacity="0.9"/>
+            </StackPanel>
+        </Border>
+        <StackPanel Grid.Row="1" Margin="24" Spacing="10">
+            <TextBlock Text="Способ оплаты"/>
+            <ComboBox Name="MethodBox" HorizontalAlignment="Stretch"/>
+            <StackPanel Name="CardPanel" Spacing="10">
+                <TextBox Name="CardBox" Watermark="Номер карты (16 цифр)" MaxLength="19"/>
+                <TextBox Name="HolderBox" Watermark="Владелец (латиницей)"/>
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBox Name="ExpiryBox" Width="120" Watermark="ММ/ГГ" MaxLength="5"/>
+                    <TextBox Name="CvvBox" Width="100" Watermark="CVV" MaxLength="3" PasswordChar="●"/>
+                </StackPanel>
+            </StackPanel>
+            <TextBlock Name="InfoText" TextWrapping="Wrap" IsVisible="False"/>
+            <Button Name="PayButton" Content="Оплатить" HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center" Click="PayButton_Click"
+                    Background="{DynamicResource AccentBrush}" Foreground="White"/>
+            <Button Name="CancelButton" Content="Отмена" HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center" Click="CancelButton_Click"/>
+            <TextBlock Name="StatusText" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+        </StackPanel>
+    </Grid>
+</Window>
