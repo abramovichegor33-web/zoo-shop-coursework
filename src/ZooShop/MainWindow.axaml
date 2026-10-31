@@ -19,7 +19,8 @@
             <TextBox Name="PasswordBox" Watermark="Пароль" PasswordChar="●"/>
             <Button Content="Войти" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                     Background="{DynamicResource AccentBrush}" Foreground="White" Click="LoginButton_Click"/>
-            <ComboBox Name="ColorBox" HorizontalAlignment="Stretch"/>
+            <Button Name="ColorButton" Content="Выбрать тему" HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"/>
             <TextBlock Name="MessageText" TextWrapping="Wrap" HorizontalAlignment="Center"/>
         </StackPanel>
     </Grid>

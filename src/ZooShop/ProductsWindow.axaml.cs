@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 
@@ -31,47 +29,11 @@ public partial class ProductsWindow : Window
         AddCategoryBox.ItemsSource = Database.GetCategories();
         AddCategoryBox.SelectedIndex = 0;
 
-        SetupColorButton();
+        ThemePicker.Attach(ColorButton);
         LoadProducts();
 
         SearchBox.TextChanged += (_, _) => ApplyFilter();
         CategoryBox.SelectionChanged += (_, _) => ApplyFilter();
-    }
-
-    private void SetupColorButton()
-    {
-        var flyout = new Flyout();
-        flyout.Opening += (_, _) => flyout.Content = BuildColorPanel(flyout);
-        ColorButton.Flyout = flyout;
-    }
-
-    private Control BuildColorPanel(Flyout flyout)
-    {
-        var panel = new WrapPanel { Width = 220 };
-        foreach (var item in AppColors.All)
-        {
-            var name = item.Key;
-            var isCurrent = name == AppColors.CurrentName;
-            var circle = new Border
-            {
-                Width = 34,
-                Height = 34,
-                Margin = new Thickness(4),
-                CornerRadius = new CornerRadius(17),
-                Background = new SolidColorBrush(Color.Parse(item.Value)),
-                BorderBrush = Brushes.White,
-                BorderThickness = new Thickness(isCurrent ? 3 : 0),
-                Cursor = new Cursor(StandardCursorType.Hand)
-            };
-            ToolTip.SetTip(circle, name);
-            circle.PointerPressed += (_, _) =>
-            {
-                AppColors.Apply(name);
-                flyout.Hide();
-            };
-            panel.Children.Add(circle);
-        }
-        return panel;
     }
 
     private void RefreshHeader()

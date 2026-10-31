@@ -10,16 +10,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-
-        ColorBox.ItemsSource = AppColors.Names;
-        ColorBox.SelectedItem = AppColors.CurrentName;
-        ColorBox.SelectionChanged += (_, _) =>
-        {
-            if (ColorBox.SelectedItem is string n)
-            {
-                AppColors.Apply(n);
-            }
-        };
+        ThemePicker.Attach(ColorButton);
     }
 
     private void LoginButton_Click(object? sender, RoutedEventArgs e)
