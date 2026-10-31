@@ -2,15 +2,25 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="ZooShop.MainWindow"
         Title="Вход"
-        Width="320" Height="320"
+        Width="380" Height="430"
         WindowStartupLocation="CenterScreen"
         CanResize="False">
-    <StackPanel Margin="20" Spacing="10" VerticalAlignment="Center">
-        <TextBlock Text="Магазин зоотоваров" FontSize="20" HorizontalAlignment="Center"/>
-        <TextBox Name="LoginBox" Watermark="Логин"/>
-        <TextBox Name="PasswordBox" Watermark="Пароль" PasswordChar="●"/>
-        <Button Content="Войти" HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Center" Click="LoginButton_Click"/>
-        <TextBlock Name="MessageText" TextWrapping="Wrap" HorizontalAlignment="Center"/>
-    </StackPanel>
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0" Background="{DynamicResource AccentBrush}" Padding="20">
+            <StackPanel>
+                <TextBlock Text="Магазин зоотоваров" FontSize="24" FontWeight="Bold"
+                           Foreground="White" HorizontalAlignment="Center"/>
+                <TextBlock Text="Войдите в свой аккаунт" Foreground="White" Opacity="0.9"
+                           HorizontalAlignment="Center" Margin="0,4,0,0"/>
+            </StackPanel>
+        </Border>
+        <StackPanel Grid.Row="1" Margin="30" Spacing="12" VerticalAlignment="Center">
+            <TextBox Name="LoginBox" Watermark="Логин"/>
+            <TextBox Name="PasswordBox" Watermark="Пароль" PasswordChar="●"/>
+            <Button Content="Войти" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                    Background="{DynamicResource AccentBrush}" Foreground="White" Click="LoginButton_Click"/>
+            <ComboBox Name="ColorBox" HorizontalAlignment="Stretch"/>
+            <TextBlock Name="MessageText" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+        </StackPanel>
+    </Grid>
 </Window>

@@ -1,0 +1,21 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ZooShop.SettingsWindow"
+        Title="Настройки аккаунта"
+        Width="380" Height="500"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+    <StackPanel Margin="24" Spacing="10">
+        <TextBlock Text="Профиль" FontSize="18" FontWeight="Bold"/>
+        <TextBlock Name="LoginText"/>
+        <TextBox Name="FullNameBox" Watermark="Имя"/>
+        <Button Content="Сохранить имя" Click="SaveName_Click"/>
+        <Border Height="1" Background="Gray" Opacity="0.4" Margin="0,10"/>
+        <TextBlock Text="Смена пароля" FontSize="18" FontWeight="Bold"/>
+        <TextBox Name="OldPasswordBox" PasswordChar="●" Watermark="Текущий пароль"/>
+        <TextBox Name="NewPasswordBox" PasswordChar="●" Watermark="Новый пароль (от 4 символов)"/>
+        <Button Content="Сменить пароль" Click="ChangePassword_Click"/>
+        <TextBlock Name="MessageText" TextWrapping="Wrap"/>
+        <Button Content="Закрыть" HorizontalAlignment="Right" Click="CloseButton_Click"/>
+    </StackPanel>
+</Window>

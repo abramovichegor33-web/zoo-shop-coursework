@@ -1,13 +1,31 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="ZooShop.ProductsWindow"
-        Title="Товары"
-        Width="800" Height="500"
+        Title="Магазин зоотоваров"
+        Width="1050" Height="700" MinWidth="850" MinHeight="500"
         WindowStartupLocation="CenterScreen">
-    <Grid Margin="10" RowDefinitions="Auto,*">
-        <TextBlock Name="UserText" Grid.Row="0" Margin="0,0,0,10" FontSize="16"/>
-        <DataGrid Name="ProductsGrid" Grid.Row="1" IsReadOnly="True"
-                  AutoGenerateColumns="False" GridLinesVisibility="All">
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <Border Grid.Row="0" Background="{DynamicResource AccentBrush}" Padding="16,12">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Магазин зоотоваров" FontSize="22" FontWeight="Bold" Foreground="White"/>
+                    <TextBlock Name="UserText" Foreground="White" Opacity="0.9"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <ComboBox Name="ColorBox" Width="150"/>
+                    <Button Content="Настройки" Click="SettingsButton_Click"/>
+                    <Button Content="Выйти" Click="LogoutButton_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="12">
+            <TextBox Name="SearchBox" Width="280" Watermark="Поиск по названию"/>
+            <ComboBox Name="CategoryBox" Width="220"/>
+            <Button Content="Сбросить" Click="ResetButton_Click"/>
+        </StackPanel>
+        <DataGrid Name="ProductsGrid" Grid.Row="2" Margin="12,0,12,0" IsReadOnly="True"
+                  AutoGenerateColumns="False" GridLinesVisibility="Horizontal"
+                  SelectionMode="Single">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding Id}"/>
                 <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
@@ -17,5 +35,23 @@
                 <DataGridTextColumn Header="Описание" Binding="{Binding Description}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
+        <Border Grid.Row="3" Name="AdminPanel" IsVisible="False" Padding="12" Margin="12"
+                CornerRadius="8" BorderThickness="1" BorderBrush="{DynamicResource AccentBrush}">
+            <StackPanel Spacing="8">
+                <TextBlock Text="Управление товарами (администратор)" FontWeight="Bold"/>
+                <WrapPanel>
+                    <TextBox Name="NameBox" Width="220" Watermark="Название" Margin="0,0,8,8"/>
+                    <ComboBox Name="AddCategoryBox" Width="180" Margin="0,0,8,8"/>
+                    <TextBox Name="PriceBox" Width="100" Watermark="Цена" Margin="0,0,8,8"/>
+                    <TextBox Name="QuantityBox" Width="90" Watermark="Кол-во" Margin="0,0,8,8"/>
+                    <TextBox Name="DescriptionBox" Width="260" Watermark="Описание" Margin="0,0,8,8"/>
+                </WrapPanel>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Content="Добавить товар" Click="AddButton_Click"/>
+                    <Button Content="Удалить выбранный" Click="DeleteButton_Click"/>
+                    <TextBlock Name="StatusText" VerticalAlignment="Center"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

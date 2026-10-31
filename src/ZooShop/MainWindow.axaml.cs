@@ -10,21 +10,31 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+
+        ColorBox.ItemsSource = AppColors.Names;
+        ColorBox.SelectedItem = AppColors.CurrentName;
+        ColorBox.SelectionChanged += (_, _) =>
+        {
+            if (ColorBox.SelectedItem is string n)
+            {
+                AppColors.Apply(n);
+            }
+        };
     }
 
     private void LoginButton_Click(object? sender, RoutedEventArgs e)
     {
         try
         {
-            var role = Database.Login(LoginBox.Text ?? "", PasswordBox.Text ?? "");
-            if (role == null)
+            var user = Database.Login(LoginBox.Text ?? "", PasswordBox.Text ?? "");
+            if (user == null)
             {
                 MessageText.Foreground = Brushes.Red;
                 MessageText.Text = "Неверный логин или пароль";
                 return;
             }
-            var productsWindow = new ProductsWindow(role);
-            productsWindow.Show();
+            Session.Current = user;
+            new ProductsWindow().Show();
             Close();
         }
         catch (Exception ex)
