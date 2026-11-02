@@ -1,29 +1,46 @@
 @page
 @model ZooShop.Web.Pages.ProductsModel
+@using ZooShop.Web
 @{
     ViewData["Title"] = "Каталог товаров";
-}
+    var themeColor = WebSession.GetThemeColor(HttpContext);
 
-<h2>Каталог товаров</h2>
+    string GetIcon(string category)
+    {
+        if (category.Contains("собак")) return "🦴";
+        if (category.Contains("кошек")) return "🐟";
+        if (category.Contains("Игрушки")) return "🧸";
+        if (category.Contains("Аквариум")) return "🐠";
+        if (category.Contains("птиц")) return "🦜";
+        if (category.Contains("грызун")) return "🐹";
+        if (category.Contains("Амуниция") || category.Contains("одежда")) return "🦮";
+        if (category.Contains("Гигиена") || category.Contains("уход") || category.Contains("Наполнители")) return "🧼";
+        if (category.Contains("Домики") || category.Contains("лежанки") || category.Contains("Переноски")) return "🏠";
+        return "🐾";
+    }
+}
 
 @if (!string.IsNullOrEmpty(Model.Message))
 {
-    <div style="background: #1b4d20; color: #a5d6a7; padding: 10px 14px; border-radius: 6px; margin-bottom: 16px;">
+    <div style="background: #1b4d20; color: #a5d6a7; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px;">
         @Model.Message
     </div>
 }
 
 @if (!string.IsNullOrEmpty(Model.Error))
 {
-    <div style="background: #5a1d1d; color: #ff9999; padding: 10px 14px; border-radius: 6px; margin-bottom: 16px;">
+    <div style="background: #5a1d1d; color: #ff9999; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px;">
         @Model.Error
     </div>
 }
 
-<form method="get" style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; background: #1e1e1e; padding: 14px; border-radius: 8px;">
-    <input type="text" name="Search" value="@Model.Search" placeholder="Поиск по названию..." style="flex: 1; min-width: 220px;" />
+<form method="get" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 24px;">
+    <input type="text" name="Search" value="@Model.Search" placeholder="Поиск по названию"
+           onchange="this.form.submit()"
+           style="width: 300px; padding: 10px 14px; border-radius: 8px; background: #141414; border: 1px solid #333; color: #fff;" />
 
-    <select name="Category" style="min-width: 200px;">
+    <select name="Category" onchange="this.form.submit()"
+            style="width: 220px; padding: 10px 14px; border-radius: 8px; background: #141414; border: 1px solid #333; color: #fff;">
         <option value="Все">Все категории</option>
         @foreach (var cat in Model.Categories)
         {
@@ -38,14 +55,19 @@
         }
     </select>
 
-    <button type="submit" class="accent-btn">Найти</button>
-    <a href="/Products" class="nav-btn" style="display: inline-flex; align-items: center;">Сбросить</a>
+    <button type="submit" class="accent-btn" style="padding: 10px 16px; border-radius: 8px;">Найти</button>
+    <a href="/Products" style="color: #ccc; text-decoration: none; font-size: 14px; margin-left: 4px;">Сбросить</a>
 </form>
+
+<div style="margin-bottom: 22px;">
+    <h2 style="margin: 0 0 8px 0; font-size: 24px; font-weight: 600;">Каталог</h2>
+    <div style="width: 90px; height: 3px; background: @themeColor; border-radius: 2px;"></div>
+</div>
 
 @if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
 {
-    <div style="background: #1e1e1e; padding: 16px; border-radius: 8px; margin-bottom: 24px; border: 1px solid #333;">
-        <h3 style="margin-top: 0; margin-bottom: 12px;">Админ-панель: добавить товар</h3>
+    <div style="background: #181a1d; padding: 16px; border-radius: 12px; margin-bottom: 24px; border: 1px solid #2a2d32;">
+        <h3 style="margin-top: 0; margin-bottom: 12px; font-size: 16px;">Админ-панель: добавить товар</h3>
         <form method="post" asp-page-handler="AddProduct" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
             <input type="text" name="name" placeholder="Название товара" required style="flex: 2; min-width: 180px;" />
 
@@ -65,54 +87,61 @@
     </div>
 }
 
-<table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Название</th>
-            <th>Категория</th>
-            <th>Цена</th>
-            <th>В наличии</th>
-            <th>Описание</th>
-            <th>Действие</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var p in Model.Products)
-        {
-            <tr>
-                <td>@p.Id</td>
-                <td><strong>@p.Name</strong></td>
-                <td>@p.Category</td>
-                <td>@p.Price.ToString("0.00") ₽</td>
-                <td>@p.Quantity шт.</td>
-                <td style="color: #aaa; font-size: 14px;">@p.Description</td>
-                <td style="white-space: nowrap;">
-                    <div style="display: flex; gap: 8px;">
-                        @if (p.Quantity > 0)
-                        {
-                            <form method="post" asp-page-handler="AddToCart" style="margin: 0;">
-                                <input type="hidden" name="productId" value="@p.Id" />
-                                <input type="hidden" name="search" value="@Model.Search" />
-                                <input type="hidden" name="category" value="@Model.Category" />
-                                <button type="submit" class="accent-btn" style="padding: 6px 12px; font-size: 13px;">+ В корзину</button>
-                            </form>
-                        }
-                        else
-                        {
-                            <span style="color: #777; font-size: 13px;">Нет на складе</span>
-                        }
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 18px;">
+    @foreach (var p in Model.Products)
+    {
+        <div style="background: #181a1d; border: 1px solid #26292e; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: #23272e; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px;">
+                    @GetIcon(p.Category)
+                </div>
 
-                        @if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
-                        {
-                            <form method="post" asp-page-handler="DeleteProduct" style="margin: 0;" onsubmit="return confirm('Удалить товар «@p.Name»?');">
-                                <input type="hidden" name="id" value="@p.Id" />
-                                <button type="submit" class="danger-btn" style="font-size: 13px;">Удалить</button>
-                            </form>
-                        }
-                    </div>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                <div style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 8px; line-height: 1.3; min-height: 42px;">
+                    @p.Name
+                </div>
+
+                <div style="font-size: 13px; color: #8b929a; margin-bottom: 8px;">
+                    @p.Category
+                </div>
+
+                <div style="font-size: 20px; font-weight: 800; color: @themeColor; margin-bottom: 6px;">
+                    @p.Price.ToString("0.##") ₽
+                </div>
+
+                <div style="font-size: 12px; color: #8b929a; margin-bottom: 16px;">
+                    В наличии: @p.Quantity
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                @if (p.Quantity > 0)
+                {
+                    <form method="post" asp-page-handler="AddToCart" style="margin: 0;">
+                        <input type="hidden" name="productId" value="@p.Id" />
+                        <input type="hidden" name="search" value="@Model.Search" />
+                        <input type="hidden" name="category" value="@Model.Category" />
+                        <button type="submit" class="accent-btn" style="width: 100%; padding: 10px; border-radius: 8px; font-size: 14px;">
+                            В корзину
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <button disabled style="width: 100%; padding: 10px; border-radius: 8px; background: #2b2b2b; color: #666; border: none;">
+                        Нет в наличии
+                    </button>
+                }
+
+                @if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
+                {
+                    <form method="post" asp-page-handler="DeleteProduct" style="margin: 0;" onsubmit="return confirm('Удалить товар «@p.Name»?');">
+                        <input type="hidden" name="id" value="@p.Id" />
+                        <button type="submit" class="danger-btn" style="width: 100%; padding: 8px; border-radius: 8px; font-size: 13px;">
+                            Удалить
+                        </button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
+</div>

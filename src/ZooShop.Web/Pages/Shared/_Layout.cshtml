@@ -18,132 +18,209 @@
         body {
             margin: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #121212;
+            background-color: #0f1012;
             color: #e0e0e0;
         }
         header {
             background-color: @themeColor;
             color: #ffffff;
-            padding: 12px 24px;
+            padding: 16px 28px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 12px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
         }
         .brand {
             font-size: 20px;
-            font-weight: bold;
+            font-weight: 700;
             color: #fff;
             text-decoration: none;
+            display: block;
+        }
+        .user-sub {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.85);
+            margin-top: 2px;
         }
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
         .nav-btn {
             background: rgba(0, 0, 0, 0.25);
-            color: #fff;
+            color: #ffffff;
             text-decoration: none;
-            padding: 7px 13px;
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
+            transition: background 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
         .nav-btn:hover {
             background: rgba(0, 0, 0, 0.4);
+            color: #ffffff;
         }
         .accent-btn {
             background-color: @themeColor;
             color: #ffffff;
             border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
+            padding: 9px 16px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             text-decoration: none;
             display: inline-block;
+            transition: filter 0.15s;
         }
         .accent-btn:hover {
-            filter: brightness(1.1);
+            filter: brightness(1.12);
         }
         .danger-btn {
             background-color: #b71c1c;
             color: #ffffff;
             border: none;
             padding: 6px 12px;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
         }
         .container {
             max-width: 1150px;
             margin: 24px auto;
-            padding: 0 16px;
+            padding: 0 20px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            background: #1e1e1e;
-            border-radius: 8px;
+            background: #181a1d;
+            border-radius: 10px;
             overflow: hidden;
+            border: 1px solid #26292e;
         }
         th, td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #2e2e2e;
+            padding: 12px 14px;
+            border-bottom: 1px solid #26292e;
             text-align: left;
         }
         th {
-            background: #272727;
+            background: #1f2226;
             color: #fff;
         }
         input, select {
-            background: #2b2b2b;
+            background: #141518;
             color: #fff;
-            border: 1px solid #444;
-            padding: 8px 10px;
-            border-radius: 6px;
+            border: 1px solid #2e3238;
+            padding: 9px 12px;
+            border-radius: 8px;
+        }
+        .theme-dropdown {
+            position: relative;
+        }
+        .theme-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: @themeColor;
+            border: 2px solid #ffffff;
+            display: inline-block;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+        }
+        .theme-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            background: #1b1d21;
+            border: 1px solid #2e3238;
+            border-radius: 12px;
+            padding: 12px;
+            width: 220px;
+            box-shadow: 0 10px 28px rgba(0,0,0,0.6);
+            z-index: 1000;
+        }
+        .theme-menu.open {
+            display: block;
+        }
+        .theme-item {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #e0e0e0;
+            padding: 7px 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            text-align: left;
+        }
+        .theme-item:hover {
+            background: #282b30;
+        }
+        .theme-item.active {
+            background: #282b30;
+            font-weight: 600;
+            color: #fff;
+        }
+        .swatch {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            flex-shrink: 0;
         }
     </style>
 </head>
 <body>
     <header>
-        <div style="display: flex; align-items: center; gap: 16px;">
+        <div>
             <a class="brand" href="/Products">🐾 Магазин зоотоваров</a>
             @if (user != null)
             {
-                <span style="font-size: 14px; opacity: 0.9;">
-                    @user.FullName (@(user.IsAdmin ? "Администратор" : "Покупатель"))
-                </span>
+                <div class="user-sub">
+                    @user.FullName · @(user.IsAdmin ? "администратор" : "покупатель")
+                </div>
             }
         </div>
 
         <div class="nav-links">
-            <form method="post" asp-page="/Index" asp-page-handler="Color" style="margin: 0;">
-                <input type="hidden" name="returnUrl" value="@currentUrl" />
-                <select name="hex" onchange="this.form.submit()" class="nav-btn" style="background: rgba(0,0,0,0.35); color: #fff;">
-                    @foreach (var kv in WebSession.Colors)
-                    {
-                        if (kv.Value == themeColor)
+            @if (user != null)
+            {
+                <a class="nav-btn" href="/Products">Каталог</a>
+                <a class="nav-btn" href="/Cart">Корзина@(cartCount > 0 ? $" ({cartCount})" : "")</a>
+                <a class="nav-btn" href="/Orders">Мои заказы</a>
+            }
+
+            <div class="theme-dropdown" id="themeDropdown">
+                <button type="button" class="nav-btn" onclick="toggleThemeMenu(event)">
+                    <span class="theme-dot"></span>
+                    Тема
+                </button>
+                <div class="theme-menu" id="themeMenu">
+                    <form method="post" asp-page="/Index" asp-page-handler="Color" style="margin: 0;">
+                        <input type="hidden" name="returnUrl" value="@currentUrl" />
+                        @foreach (var kv in WebSession.Colors)
                         {
-                            <option value="@kv.Value" selected style="background: #222; color: #fff;">Цвет: @kv.Key</option>
+                            var isActive = kv.Value == themeColor ? "active" : "";
+                            <button type="submit" name="hex" value="@kv.Value" class="theme-item @isActive">
+                                <span class="swatch" style="background: @kv.Value;"></span>
+                                <span>@kv.Key</span>
+                            </button>
                         }
-                        else
-                        {
-                            <option value="@kv.Value" style="background: #222; color: #fff;">Цвет: @kv.Key</option>
-                        }
-                    }
-                </select>
-            </form>
+                    </form>
+                </div>
+            </div>
 
             @if (user != null)
             {
-                <a class="nav-btn" href="/Products">Товары</a>
-                <a class="nav-btn" href="/Cart">Корзина (@cartCount)</a>
-                <a class="nav-btn" href="/Orders">Мои заказы</a>
                 <a class="nav-btn" href="/Settings">Настройки</a>
                 <form method="post" asp-page="/Index" asp-page-handler="Logout" style="margin: 0;">
                     <button type="submit" class="nav-btn">Выйти</button>
@@ -155,5 +232,16 @@
     <div class="container">
         @RenderBody()
     </div>
+
+    <script>
+        function toggleThemeMenu(e) {
+            e.stopPropagation();
+            document.getElementById('themeMenu').classList.toggle('open');
+        }
+        document.addEventListener('click', function () {
+            var menu = document.getElementById('themeMenu');
+            if (menu) menu.classList.remove('open');
+        });
+    </script>
 </body>
 </html>

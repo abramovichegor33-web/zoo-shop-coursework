@@ -27,6 +27,16 @@
             <Setter Property="CornerRadius" Value="10"/>
             <Setter Property="Padding" Value="12,8"/>
         </Style>
+        <Style Selector="Button.headerBtn">
+            <Setter Property="Background" Value="#38000000"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="12,8"/>
+        </Style>
+        <Style Selector="Button.headerBtn:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#55000000"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
         <Style Selector="TextBox">
             <Setter Property="CornerRadius" Value="10"/>
         </Style>
@@ -35,18 +45,18 @@
         </Style>
     </Window.Styles>
     <Grid RowDefinitions="Auto,Auto,*">
-        <Border Grid.Row="0" Padding="24,16" BorderThickness="0,0,0,1" BorderBrush="#2C2C2E">
+        <Border Grid.Row="0" Background="{DynamicResource AccentBrush}" Padding="24,16" BorderThickness="0,0,0,1" BorderBrush="#2C2C2E">
             <Grid ColumnDefinitions="*,Auto">
                 <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="Магазин зоотоваров" FontSize="22" FontWeight="SemiBold"/>
-                    <TextBlock Name="UserText" Opacity="0.6" FontSize="13"/>
+                    <TextBlock Text="🐾 Магазин зоотоваров" Foreground="White" FontSize="22" FontWeight="SemiBold"/>
+                    <TextBlock Name="UserText" Foreground="White" Opacity="0.85" FontSize="13"/>
                 </StackPanel>
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-                    <Button Name="CartButton" Content="Корзина" Classes="flat" Click="CartButton_Click"/>
-                    <Button Name="OrdersButton" Content="Мои заказы" Classes="flat" Click="OrdersButton_Click"/>
-                    <Button Name="ColorButton" Content="Тема" Classes="flat"/>
-                    <Button Content="Настройки" Classes="flat" Click="SettingsButton_Click"/>
-                    <Button Content="Выйти" Classes="flat" Click="LogoutButton_Click"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                    <Button Name="CartButton" Content="Корзина" Classes="headerBtn" Click="CartButton_Click"/>
+                    <Button Name="OrdersButton" Content="Мои заказы" Classes="headerBtn" Click="OrdersButton_Click"/>
+                    <Button Name="ColorButton" Content="Тема" Classes="headerBtn"/>
+                    <Button Content="Настройки" Classes="headerBtn" Click="SettingsButton_Click"/>
+                    <Button Content="Выйти" Classes="headerBtn" Click="LogoutButton_Click"/>
                 </StackPanel>
             </Grid>
         </Border>
