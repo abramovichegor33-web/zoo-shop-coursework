@@ -1,0 +1,49 @@
+@page
+@model ZooShop.Web.Pages.SettingsModel
+@{
+    ViewData["Title"] = "Настройки аккаунта";
+}
+
+<h2>Настройки аккаунта</h2>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div style="background: #1b4d20; color: #a5d6a7; padding: 10px 14px; border-radius: 6px; margin-bottom: 16px;">
+        @Model.Message
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.Error))
+{
+    <div style="background: #5a1d1d; color: #ff9999; padding: 10px 14px; border-radius: 6px; margin-bottom: 16px;">
+        @Model.Error
+    </div>
+}
+
+<div style="display: flex; gap: 24px; flex-wrap: wrap;">
+    <div style="background: #1e1e1e; padding: 20px; border-radius: 8px; flex: 1; min-width: 300px; max-width: 450px; border: 1px solid #333;">
+        <h3 style="margin-top: 0;">Изменить имя</h3>
+        <form method="post" asp-page-handler="UpdateName">
+            <div style="margin-bottom: 14px;">
+                <label style="display: block; margin-bottom: 6px; color: #bbb;">Ваше полное имя</label>
+                <input type="text" name="fullName" value="@Model.CurrentUser?.FullName" required style="width: 100%;" />
+            </div>
+            <button type="submit" class="accent-btn">Сохранить имя</button>
+        </form>
+    </div>
+
+    <div style="background: #1e1e1e; padding: 20px; border-radius: 8px; flex: 1; min-width: 300px; max-width: 450px; border: 1px solid #333;">
+        <h3 style="margin-top: 0;">Сменить пароль</h3>
+        <form method="post" asp-page-handler="ChangePassword">
+            <div style="margin-bottom: 14px;">
+                <label style="display: block; margin-bottom: 6px; color: #bbb;">Старый пароль</label>
+                <input type="password" name="oldPassword" required style="width: 100%;" />
+            </div>
+            <div style="margin-bottom: 14px;">
+                <label style="display: block; margin-bottom: 6px; color: #bbb;">Новый пароль</label>
+                <input type="password" name="newPassword" required style="width: 100%;" />
+            </div>
+            <button type="submit" class="accent-btn">Обновить пароль</button>
+        </form>
+    </div>
+</div>

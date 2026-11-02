@@ -1,0 +1,54 @@
+@page
+@model ZooShop.Web.Pages.OrdersModel
+@{
+    ViewData["Title"] = "Мои заказы";
+}
+
+<h2>Мои заказы</h2>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div style="background: #1b4d20; color: #a5d6a7; padding: 10px 14px; border-radius: 6px; margin-bottom: 16px;">
+        @Model.Message
+    </div>
+}
+
+@if (Model.Orders.Count == 0)
+{
+    <div style="background: #1e1e1e; padding: 24px; border-radius: 8px; text-align: center;">
+        <p style="color: #aaa; margin-bottom: 16px;">У вас пока нет оформленных заказов.</p>
+        <a href="/Products" class="accent-btn">Перейти в каталог</a>
+    </div>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Дата</th>
+                <th>Товары</th>
+                <th>Сумма</th>
+                <th>Оплата</th>
+                <th>Статус</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var o in Model.Orders)
+            {
+                <tr>
+                    <td><strong>#@o.Id</strong></td>
+                    <td>@o.Date</td>
+                    <td>@o.Items</td>
+                    <td>@o.Total.ToString("0.00") ₽</td>
+                    <td>@o.Payment</td>
+                    <td>
+                        <span style="background: #1b4d20; color: #a5d6a7; padding: 4px 8px; border-radius: 4px; font-size: 13px;">
+                            @o.Status
+                        </span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

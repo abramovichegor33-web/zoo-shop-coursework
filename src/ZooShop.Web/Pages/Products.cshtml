@@ -1,0 +1,118 @@
+@page
+@model ZooShop.Web.Pages.ProductsModel
+@{
+    ViewData["Title"] = "Каталог товаров";
+}
+
+<h2>Каталог товаров</h2>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div style="background: #1b4d20; color: #a5d6a7; padding: 10px 14px; border-radius: 6px; margin-bottom: 16px;">
+        @Model.Message
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.Error))
+{
+    <div style="background: #5a1d1d; color: #ff9999; padding: 10px 14px; border-radius: 6px; margin-bottom: 16px;">
+        @Model.Error
+    </div>
+}
+
+<form method="get" style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; background: #1e1e1e; padding: 14px; border-radius: 8px;">
+    <input type="text" name="Search" value="@Model.Search" placeholder="Поиск по названию..." style="flex: 1; min-width: 220px;" />
+
+    <select name="Category" style="min-width: 200px;">
+        <option value="Все">Все категории</option>
+        @foreach (var cat in Model.Categories)
+        {
+            if (cat == Model.Category)
+            {
+                <option value="@cat" selected>@cat</option>
+            }
+            else
+            {
+                <option value="@cat">@cat</option>
+            }
+        }
+    </select>
+
+    <button type="submit" class="accent-btn">Найти</button>
+    <a href="/Products" class="nav-btn" style="display: inline-flex; align-items: center;">Сбросить</a>
+</form>
+
+@if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
+{
+    <div style="background: #1e1e1e; padding: 16px; border-radius: 8px; margin-bottom: 24px; border: 1px solid #333;">
+        <h3 style="margin-top: 0; margin-bottom: 12px;">Админ-панель: добавить товар</h3>
+        <form method="post" asp-page-handler="AddProduct" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+            <input type="text" name="name" placeholder="Название товара" required style="flex: 2; min-width: 180px;" />
+
+            <select name="categoryName" required style="flex: 1; min-width: 160px;">
+                @foreach (var cat in Model.Categories)
+                {
+                    <option value="@cat">@cat</option>
+                }
+            </select>
+
+            <input type="number" step="0.01" min="0.01" name="price" placeholder="Цена (₽)" required style="width: 120px;" />
+            <input type="number" min="0" name="quantity" placeholder="Кол-во" required style="width: 100px;" />
+            <input type="text" name="description" placeholder="Описание" style="flex: 2; min-width: 200px;" />
+
+            <button type="submit" class="accent-btn">Добавить</button>
+        </form>
+    </div>
+}
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Категория</th>
+            <th>Цена</th>
+            <th>В наличии</th>
+            <th>Описание</th>
+            <th>Действие</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model.Products)
+        {
+            <tr>
+                <td>@p.Id</td>
+                <td><strong>@p.Name</strong></td>
+                <td>@p.Category</td>
+                <td>@p.Price.ToString("0.00") ₽</td>
+                <td>@p.Quantity шт.</td>
+                <td style="color: #aaa; font-size: 14px;">@p.Description</td>
+                <td style="white-space: nowrap;">
+                    <div style="display: flex; gap: 8px;">
+                        @if (p.Quantity > 0)
+                        {
+                            <form method="post" asp-page-handler="AddToCart" style="margin: 0;">
+                                <input type="hidden" name="productId" value="@p.Id" />
+                                <input type="hidden" name="search" value="@Model.Search" />
+                                <input type="hidden" name="category" value="@Model.Category" />
+                                <button type="submit" class="accent-btn" style="padding: 6px 12px; font-size: 13px;">+ В корзину</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span style="color: #777; font-size: 13px;">Нет на складе</span>
+                        }
+
+                        @if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
+                        {
+                            <form method="post" asp-page-handler="DeleteProduct" style="margin: 0;" onsubmit="return confirm('Удалить товар «@p.Name»?');">
+                                <input type="hidden" name="id" value="@p.Id" />
+                                <button type="submit" class="danger-btn" style="font-size: 13px;">Удалить</button>
+                            </form>
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
