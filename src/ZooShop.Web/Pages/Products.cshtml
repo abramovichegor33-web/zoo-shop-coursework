@@ -34,40 +34,38 @@
     </div>
 }
 
-<form method="get" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 24px;">
-    <input type="text" name="Search" value="@Model.Search" placeholder="Поиск по названию"
-           onchange="this.form.submit()"
-           style="width: 300px; padding: 10px 14px; border-radius: 8px; background: #141414; border: 1px solid #333; color: #fff;" />
+<div style="background: #181a1d; padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #2a2d32;">
+    <h3 style="margin-top: 0; margin-bottom: 14px; font-size: 16px; color: #fff; font-weight: 600;">🔍 Поиск и фильтрация товаров</h3>
+    <form method="get" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+        <input type="text" name="Search" value="@Model.Search" placeholder="Поиск по названию"
+               onchange="this.form.submit()"
+               style="width: 300px; padding: 10px 14px; border-radius: 8px; background: #141414; border: 1px solid #333; color: #fff;" />
 
-    <select name="Category" onchange="this.form.submit()"
-            style="width: 220px; padding: 10px 14px; border-radius: 8px; background: #141414; border: 1px solid #333; color: #fff;">
-        <option value="Все">Все категории</option>
-        @foreach (var cat in Model.Categories)
-        {
-            if (cat == Model.Category)
+        <select name="Category" onchange="this.form.submit()"
+                style="width: 220px; padding: 10px 14px; border-radius: 8px; background: #141414; border: 1px solid #333; color: #fff;">
+            <option value="Все">Все категории</option>
+            @foreach (var cat in Model.Categories)
             {
-                <option value="@cat" selected>@cat</option>
+                if (cat == Model.Category)
+                {
+                    <option value="@cat" selected>@cat</option>
+                }
+                else
+                {
+                    <option value="@cat">@cat</option>
+                }
             }
-            else
-            {
-                <option value="@cat">@cat</option>
-            }
-        }
-    </select>
+        </select>
 
-    <button type="submit" class="accent-btn" style="padding: 10px 16px; border-radius: 8px;">Найти</button>
-    <a href="/Products" style="color: #ccc; text-decoration: none; font-size: 14px; margin-left: 4px;">Сбросить</a>
-</form>
-
-<div style="margin-bottom: 22px;">
-    <h2 style="margin: 0 0 8px 0; font-size: 24px; font-weight: 600;">Каталог</h2>
-    <div style="width: 90px; height: 3px; background: @themeColor; border-radius: 2px;"></div>
+        <button type="submit" class="accent-btn" style="padding: 10px 16px; border-radius: 8px;">Найти</button>
+        <a href="/Products" style="color: #ccc; text-decoration: none; font-size: 14px; margin-left: 4px;">Сбросить</a>
+    </form>
 </div>
 
 @if (Model.CurrentUser != null && Model.CurrentUser.IsAdmin)
 {
-    <div style="background: #181a1d; padding: 16px; border-radius: 12px; margin-bottom: 24px; border: 1px solid #2a2d32;">
-        <h3 style="margin-top: 0; margin-bottom: 12px; font-size: 16px;">Админ-панель: добавить товар</h3>
+    <div style="background: #181a1d; padding: 16px; border-radius: 12px; margin-bottom: 24px; border: 1px solid @themeColor;">
+        <h3 style="margin-top: 0; margin-bottom: 14px; font-size: 16px; color: #fff; font-weight: 600;">💼 Админ-панель: Добавление нового товара</h3>
         <form method="post" asp-page-handler="AddProduct" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
             <input type="text" name="name" placeholder="Название товара" required style="flex: 2; min-width: 180px;" />
 
@@ -82,10 +80,15 @@
             <input type="number" min="0" name="quantity" placeholder="Кол-во" required style="width: 100px;" />
             <input type="text" name="description" placeholder="Описание" style="flex: 2; min-width: 200px;" />
 
-            <button type="submit" class="accent-btn">Добавить</button>
+            <button type="submit" class="accent-btn">Добавить товар</button>
         </form>
     </div>
 }
+
+<div style="margin-bottom: 22px;">
+    <h2 style="margin: 0 0 8px 0; font-size: 24px; font-weight: 600;">Каталог</h2>
+    <div style="width: 90px; height: 3px; background: @themeColor; border-radius: 2px;"></div>
+</div>
 
 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 18px;">
     @foreach (var p in Model.Products)
