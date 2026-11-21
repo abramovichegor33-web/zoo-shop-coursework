@@ -139,6 +139,35 @@ public static class Database
         cmd.ExecuteNonQuery();
     }
 
+    public static int SetMinimumPrice(decimal minPrice)
+    {
+        using var conn = new MySqlConnection(ConnectionString);
+        conn.Open();
+
+        using var cmd = new MySqlCommand("UPDATE products SET price = @minPrice WHERE price < @minPrice", conn);
+        cmd.Parameters.AddWithValue("@minPrice", minPrice);
+        return cmd.ExecuteNonQuery();
+    }
+
+    public static void ResetDefaultPrices()
+    {
+        var d = new Dictionary<int, decimal> {
+            {1,850},{2,65.50m},{3,150},{4,4200},{6,1100},{7,95},{8,180},{9,780},
+            {10,690},{11,120},{12,210},{13,90},{14,350},{15,1450},{16,1300},{17,140},
+            {18,380},{19,520},{20,1900},{21,230},{22,410},{23,3200},{24,190},{25,110},
+            {26,320},{27,890},{28,250},{29,2100},{30,430},{31,1700},{32,2400},{33,360},
+            {34,540},{35,780},{37,99}
+        };
+        using var conn = new MySqlConnection(ConnectionString);
+        conn.Open();
+        foreach (var x in d) {
+            using var cmd = new MySqlCommand("UPDATE products SET price = @p WHERE id = @id", conn);
+            cmd.Parameters.AddWithValue("@p", x.Value);
+            cmd.Parameters.AddWithValue("@id", x.Key);
+            cmd.ExecuteNonQuery();
+        }
+    }
+
     public static void UpdateFullName(int userId, string fullName)
     {
         using var conn = new MySqlConnection(ConnectionString);

@@ -66,7 +66,7 @@
 {
     <div style="background: #181a1d; padding: 16px; border-radius: 12px; margin-bottom: 24px; border: 1px solid @themeColor;">
         <h3 style="margin-top: 0; margin-bottom: 14px; font-size: 16px; color: #fff; font-weight: 600;">💼 Админ-панель: Добавление нового товара</h3>
-        <form method="post" asp-page-handler="AddProduct" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+        <form method="post" asp-page-handler="AddProduct" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #2a2d32;">
             <input type="text" name="name" placeholder="Название товара" required style="flex: 2; min-width: 180px;" />
 
             <select name="categoryName" required style="flex: 1; min-width: 160px;">
@@ -82,6 +82,17 @@
 
             <button type="submit" class="accent-btn">Добавить товар</button>
         </form>
+
+        <h4 style="margin-top: 0; margin-bottom: 10px; font-size: 14px; color: #bbb; font-weight: 600;">Массовое изменение цен</h4>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+            <form method="post" asp-page-handler="SetMinPrice" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 0;" onsubmit="return confirm('Поднять цену всем товарам, которые сейчас дешевле указанного значения?');">
+                <input type="number" step="0.01" min="1" name="minPrice" placeholder="Минимальная цена (₽)" required style="width: 220px;" />
+                <button type="submit" class="accent-btn">Установить минимальную цену</button>
+            </form>
+            <form method="post" asp-page-handler="ResetPrices" style="margin: 0;" onsubmit="return confirm('Вернуть всем товарам стандартные цены?');">
+                <button type="submit" class="nav-btn" style="background: #2b2e33; border: 1px solid #444;">Вернуть стандартные цены</button>
+            </form>
+        </div>
     </div>
 }
 

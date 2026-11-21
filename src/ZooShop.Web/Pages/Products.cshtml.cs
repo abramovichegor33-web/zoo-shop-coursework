@@ -106,6 +106,29 @@ public class ProductsModel : PageModel
         }
     }
 
+    public IActionResult OnPostSetMinPrice(decimal minPrice)
+    {
+        var user = WebSession.GetUser(HttpContext);
+        if (user == null || !user.IsAdmin) return RedirectToPage("/Index");
+
+        if (minPrice <= 0)
+        {
+            return RedirectToPage(new { err = "Минимальная цена должна быть больше нуля" });
+        }
+
+        int updated = Database.SetMinimumPrice(minPrice);
+        return RedirectToPage(new { msg = $"Минимальная цена {minPrice:0.##} ₽ применена (обновлено товаров: {updated})" });
+    }
+
+    public IActionResult OnPostResetPrices()
+    {
+        var user = WebSession.GetUser(HttpContext);
+        if (user == null || !user.IsAdmin) return RedirectToPage("/Index");
+
+        Database.ResetDefaultPrices();
+        return RedirectToPage(new { msg = "Стандартные цены успешно восстановлены!" });
+    }
+
     private void LoadData()
     {
         Categories = Database.GetCategories();
